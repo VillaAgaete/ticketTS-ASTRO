@@ -1,0 +1,43 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^\\/_image$",
+			"dest": "_image.astro"
+		},
+		{
+			"src": "^\\/admin\\/?$",
+			"dest": "admin.astro"
+		},
+		{
+			"src": "^\\/api\\/delete-done-tickets\\/?$",
+			"dest": "api/delete-done-tickets.ts"
+		},
+		{
+			"src": "^\\/api\\/get-tickets\\/?$",
+			"dest": "api/get-tickets.ts"
+		},
+		{
+			"src": "^\\/api\\/submit-ticket\\/?$",
+			"dest": "api/submit-ticket.ts"
+		},
+		{
+			"src": "^\\/api\\/update-ticket-status\\/?$",
+			"dest": "api/update-ticket-status.ts"
+		},
+		{
+			"src": "^\\/$",
+			"dest": "index.astro"
+		}
+	]
+}
