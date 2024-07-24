@@ -9,7 +9,10 @@
       },
       {
         "src": "src/api/**/*.ts",
-        "use": "@vercel/node"
+        "use": "@vercel/node",
+        "config": {
+          "runtime": "nodejs20.x" 
+        }
       }
     ],
     "routes": [
