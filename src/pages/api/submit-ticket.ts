@@ -1,20 +1,36 @@
 // src/pages/api/submit-ticket.ts
 import type { APIRoute } from 'astro';
-import { insertTicket } from '../../lib/db';
+import { supabase } from '../../db/supabase';
+
+// Define the Ticket interface
+interface Ticket {
+  id: number;
+  name: string;
+  department: string;
+  description: string;
+  importance: string;
+  status: string;
+  created_at: string;
+}
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const formData = await request.formData();
-    const ticket = {
+    const ticket: Omit<Ticket, 'id'> = {
       name: formData.get('name') as string,
       department: formData.get('department') as string,
       description: formData.get('description') as string,
       importance: formData.get('importance') as string,
       status: 'new',
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     };
 
-    insertTicket(ticket);
+    const { data, error } = await supabase
+      .from('tickets')
+      .insert([ticket])
+      .select() as { data: Ticket[] | null, error: any };
+
+    if (error) throw error;
 
     return new Response(JSON.stringify({
       success: true,
