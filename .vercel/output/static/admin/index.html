@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="description" content="Astro description"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v3.6.5"><title>Admin - Ticket Management</title><style>:root{--accent: 136, 58, 234;--accent-light: 224, 204, 250;--accent-dark: 49, 10, 101;--accent-gradient: linear-gradient( 45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60% )}html{font-family:system-ui,sans-serif;background:#dfe1e7;background-size:224px}code{font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace}
+.columns[data-astro-cid-2zp6q64z]{display:flex;justify-content:space-between;gap:1rem}.column[data-astro-cid-2zp6q64z]{flex:1;min-height:300px;border:1px solid #ccc;padding:1rem;border-radius:8px}.important[data-astro-cid-2zp6q64z]{background-color:#fee}.medium[data-astro-cid-2zp6q64z]{background-color:#fff5ee}.mild[data-astro-cid-2zp6q64z]{background-color:#eef6ff}#0,#9{margin-top:1rem}#delete-done-tickets[data-astro-cid-2zp6q64z]{margin-top:1rem;background-color:#f44336;color:#fff;border:none;padding:.5rem 1rem;cursor:pointer;border-radius:4px}h2[data-astro-cid-2zp6q64z]{margin-top:0}.ticket[data-astro-cid-2zp6q64z]{margin-bottom:10px}
+</style><script type="module" src="/_astro/page.51983d01.js"></script>
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+		var script = document.createElement('script');
+		script.defer = true;
+		script.src = '/_vercel/insights/script.js';
+		var head = document.querySelector('head');
+		head.appendChild(script);
+	</script></head> <body>  <h1 data-astro-cid-2zp6q64z>Ticket Management</h1> <div class="columns" data-astro-cid-2zp6q64z> <div class="column important" id="1" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Importante</h2> </div> <div class="column medium" id="2" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Medio</h2> </div> <div class="column mild" id="3" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Leve</h2> </div> </div> <div id="0" class="column two-column" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>New Tickets</h2> <div class="ticket-container" data-astro-cid-2zp6q64z></div> </div> <div id="9" class="column two-column" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Done Tickets</h2> <div class="ticket-container" data-astro-cid-2zp6q64z></div> </div> <button id="delete-done-tickets" data-astro-cid-2zp6q64z>Delete All Done Tickets</button> <script>(function(){const tickets = [{"id":12,"nombre":"yo","departamento":"tu","descripcion":"el","importancia":"medio","state":2},{"id":11,"nombre":"Don Francisco","departamento":"it","descripcion":"no se encender el pc","importancia":"importante","state":3},{"id":10,"nombre":"qqqqq","departamento":"wdqw","descripcion":"qwfdqwdfqw","importancia":"importante","state":1},{"id":7,"nombre":"6666666666666","departamento":"66666666666666666666","descripcion":"66666666666666666","importancia":"leve","state":3}];
+
+    function createTicketElement(ticket) {
+      const ticketEl = document.createElement('div');
+      ticketEl.className = 'ticket';
+      ticketEl.draggable = true;
+      ticketEl.dataset.id = ticket.id;
+
+      let importanceColor;
+      switch (ticket.importancia.toLowerCase()) {
+        case 'importante':
+          importanceColor = '#ff4d4d';
+          break;
+        case 'medio':
+          importanceColor = '#ffd700';
+          break;
+        case 'leve':
+          importanceColor = '#4da6ff';
+          break;
+        default:
+          importanceColor = '#000000';
+      }
+
+      ticketEl.innerHTML = `
+        <h3>${ticket.nombre}</h3>
+        <p class="description">${ticket.descripcion}</p>
+        <p>Departamento: ${ticket.departamento}</p>
+        <p>Importancia: <span class="importance-text" style="color: ${importanceColor}; font-weight: bold;">${ticket.importancia}</span></p>
+        <button class="mark-done">Mark as Done</button>
+      `;
+
+      return ticketEl;
+    }
+
+    function addTicketToColumn(ticket, columnId) {
+      const column = document.getElementById(columnId.toString());
+      if (column) {
+        const ticketContainer = column.querySelector('.ticket-container') || column;
+        const ticketEl = createTicketElement(ticket);
+        ticketContainer.appendChild(ticketEl);
+      }
+    }
+
+    function displayTickets(tickets) {
+      document.querySelectorAll('.ticket').forEach(t => t.remove());
+      
+      tickets.forEach(ticket => {
+        addTicketToColumn(ticket, ticket.state);
+      });
+    }
+
+    // Display initial tickets from the database
+    displayTickets(tickets);
+
+    let draggedTicket = null;
+
+    document.querySelectorAll('.column').forEach(column => {
+      column.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const afterElement = getDragAfterElement(column, e.clientY);
+        if (draggedTicket) {
+          if (afterElement) {
+            column.insertBefore(draggedTicket, afterElement);
+          } else {
+            column.appendChild(draggedTicket);
+          }
+        }
+      });
+
+      column.addEventListener('drop', e => {
+        e.preventDefault();
+        if (draggedTicket && column instanceof HTMLElement) {
+          updateTicketStatus(draggedTicket.dataset.id, parseInt(column.id));
+        }
+        draggedTicket = null;
+      });
+    });
+
+    document.addEventListener('dragstart', e => {
+      if (e.target instanceof HTMLElement && e.target.classList.contains('ticket')) {
+        draggedTicket = e.target;
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => {
+          e.target.style.opacity = '0.5';
+        }, 0);
+      }
+    });
+
+    document.addEventListener('dragend', e => {
+      if (e.target instanceof HTMLElement && e.target.classList.contains('ticket')) {
+        e.target.style.opacity = '1';
+        draggedTicket = null;
+      }
+    });
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll('.ticket:not(.dragging)')];
+
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target instanceof HTMLElement && e.target.classList.contains('mark-done')) {
+        const ticket = e.target.closest('.ticket');
+        const doneTickets = document.getElementById('9');
+        if (ticket && doneTickets) {
+          const ticketContainer = doneTickets.querySelector('.ticket-container') || doneTickets;
+          ticketContainer.appendChild(ticket);
+          updateTicketStatus(ticket.dataset.id || '', 9);
+        }
+      }
+    });
+
+    async function updateTicketStatus(ticketId, newState) {
+      try {
+        const response = await fetch('/api/update-ticket-status', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ticketId, newState }),
+        });
+        if (!response.ok) throw new Error('Failed to update ticket status');
+        console.log(`Updated ticket ${ticketId} to state ${newState}`);
+      } catch (error) {
+        console.error('Error updating ticket status:', error);
+      }
+    }
+
+    document.getElementById('delete-done-tickets')?.addEventListener('click', async () => {
+      if (confirm('Are you sure you want to delete all done tickets?')) {
+        try {
+          const response = await fetch('/api/delete-done-tickets', {
+            method: 'POST',
+          });
+          if (!response.ok) throw new Error('Failed to delete done tickets');
+          const doneTickets = document.getElementById('9');
+          if (doneTickets) {
+            const ticketContainer = doneTickets.querySelector('.ticket-container');
+            if (ticketContainer) {
+              ticketContainer.innerHTML = '';
+            } else {
+              doneTickets.innerHTML = '<h2>Done Tickets</h2><div class="ticket-container"></div>';
+            }
+          }
+        } catch (error) {
+          console.error('Error deleting done tickets:', error);
+        }
+      }
+    });
+  })();</script>  </body></html> 
