@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "cp .vercel/output/static/404.html .vercel/output/static/index.html",
     "preview": "astro preview",
     "start": "astro dev"
   },
