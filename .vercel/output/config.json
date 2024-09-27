@@ -13,31 +13,27 @@
 		},
 		{
 			"src": "^\\/_image$",
-			"dest": "_image.astro"
+			"dest": "_render"
 		},
 		{
 			"src": "^\\/admin\\/?$",
-			"dest": "admin.astro"
+			"dest": "_render"
 		},
 		{
 			"src": "^\\/api\\/delete-done-tickets\\/?$",
-			"dest": "api/delete-done-tickets.ts"
-		},
-		{
-			"src": "^\\/api\\/get-tickets\\/?$",
-			"dest": "api/get-tickets.ts"
+			"dest": "_render"
 		},
 		{
 			"src": "^\\/api\\/submit-ticket\\/?$",
-			"dest": "api/submit-ticket.ts"
+			"dest": "_render"
 		},
 		{
 			"src": "^\\/api\\/update-ticket-status\\/?$",
-			"dest": "api/update-ticket-status.ts"
+			"dest": "_render"
 		},
 		{
 			"src": "^\\/$",
-			"dest": "index.astro"
+			"dest": "_render"
 		}
 	]
 }

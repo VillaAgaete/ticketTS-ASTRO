@@ -1,5 +1,0 @@
-{
-	"runtime": "nodejs18.x",
-	"handler": "dist\\entry.pages\\api\\get-tickets.astro.mjs",
-	"launcherType": "Nodejs"
-}

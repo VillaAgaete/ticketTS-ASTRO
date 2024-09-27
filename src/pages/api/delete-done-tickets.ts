@@ -1,16 +1,19 @@
 // src/pages/api/delete-done-tickets.ts
 import type { APIRoute } from 'astro';
-import { getDb } from '../../lib/db';
+import { supabase } from '../../db/supabase';
 
 export const POST: APIRoute = async () => {
   try {
-    const db = getDb();
-    const stmt = db.prepare('DELETE FROM tickets WHERE status = ?');
-    const result = stmt.run('done');
+    const { error } = await supabase
+      .from('tickets')
+      .delete()
+      .eq('state', 9);
+
+    if (error) throw error;
 
     return new Response(JSON.stringify({
       success: true,
-      message: `${result.changes} done tickets have been deleted.`
+      message: "All done tickets have been deleted."
     }), {
       status: 200,
       headers: {
