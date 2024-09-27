@@ -28,12 +28,14 @@ if (error) {
     </div>
   </div>
   
-  <div id="0" class="column">
+  <div id="0" class="column two-column">
     <h2>New Tickets</h2>
+    <div class="ticket-container"></div>
   </div>
   
-  <div id="9" class="column">
+  <div id="9" class="column two-column">
     <h2>Done Tickets</h2>
+    <div class="ticket-container"></div>
   </div>
   
   <button id="delete-done-tickets">Delete All Done Tickets</button>
@@ -68,24 +70,15 @@ if (error) {
         <button class="mark-done">Mark as Done</button>
       `;
 
-      Object.assign(ticketEl.style, {
-        border: '2px solid #0d0202',
-        borderRadius: '8px',
-        padding: '15px',
-        marginBottom: '10px',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-        cursor: 'move'
-      });
-
       return ticketEl;
     }
 
     function addTicketToColumn(ticket, columnId) {
       const column = document.getElementById(columnId.toString());
       if (column) {
+        const ticketContainer = column.querySelector('.ticket-container') || column;
         const ticketEl = createTicketElement(ticket);
-        column.appendChild(ticketEl);
+        ticketContainer.appendChild(ticketEl);
       }
     }
 
@@ -130,14 +123,14 @@ if (error) {
         draggedTicket = e.target;
         e.dataTransfer.effectAllowed = 'move';
         setTimeout(() => {
-          e.target.style.display = 'none';
+          e.target.style.opacity = '0.5';
         }, 0);
       }
     });
 
     document.addEventListener('dragend', e => {
       if (e.target instanceof HTMLElement && e.target.classList.contains('ticket')) {
-        e.target.style.display = 'block';
+        e.target.style.opacity = '1';
         draggedTicket = null;
       }
     });
@@ -161,7 +154,8 @@ if (error) {
         const ticket = e.target.closest('.ticket');
         const doneTickets = document.getElementById('9');
         if (ticket && doneTickets) {
-          doneTickets.appendChild(ticket);
+          const ticketContainer = doneTickets.querySelector('.ticket-container') || doneTickets;
+          ticketContainer.appendChild(ticket);
           updateTicketStatus(ticket.dataset.id || '', 9);
         }
       }
@@ -191,7 +185,14 @@ if (error) {
           });
           if (!response.ok) throw new Error('Failed to delete done tickets');
           const doneTickets = document.getElementById('9');
-          if (doneTickets) doneTickets.innerHTML = '<h2>Done Tickets</h2>';
+          if (doneTickets) {
+            const ticketContainer = doneTickets.querySelector('.ticket-container');
+            if (ticketContainer) {
+              ticketContainer.innerHTML = '';
+            } else {
+              doneTickets.innerHTML = '<h2>Done Tickets</h2><div class="ticket-container"></div>';
+            }
+          }
         } catch (error) {
           console.error('Error deleting done tickets:', error);
         }
