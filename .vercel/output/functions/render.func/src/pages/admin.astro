@@ -1,14 +1,46 @@
-<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="description" content="Astro description"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v3.6.5"><title>Admin - Ticket Management</title><style>:root{--accent: 136, 58, 234;--accent-light: 224, 204, 250;--accent-dark: 49, 10, 101;--accent-gradient: linear-gradient( 45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60% )}html{font-family:system-ui,sans-serif;background:#dfe1e7;background-size:224px}code{font-family:Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace}
-.columns[data-astro-cid-2zp6q64z]{display:flex;justify-content:space-between;gap:1rem}.column[data-astro-cid-2zp6q64z]{flex:1;min-height:300px;border:1px solid #ccc;padding:1rem;border-radius:8px}.important[data-astro-cid-2zp6q64z]{background-color:#fee}.medium[data-astro-cid-2zp6q64z]{background-color:#fff5ee}.mild[data-astro-cid-2zp6q64z]{background-color:#eef6ff}#0,#9{margin-top:1rem}#delete-done-tickets[data-astro-cid-2zp6q64z]{margin-top:1rem;background-color:#f44336;color:#fff;border:none;padding:.5rem 1rem;cursor:pointer;border-radius:4px}h2[data-astro-cid-2zp6q64z]{margin-top:0}.ticket[data-astro-cid-2zp6q64z]{margin-bottom:10px}
-</style><script type="module" src="/_astro/page.51983d01.js"></script>
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-		var script = document.createElement('script');
-		script.defer = true;
-		script.src = '/_vercel/insights/script.js';
-		var head = document.querySelector('head');
-		head.appendChild(script);
-	</script></head> <body>  <h1 data-astro-cid-2zp6q64z>Ticket Management</h1> <div class="columns" data-astro-cid-2zp6q64z> <div class="column important" id="1" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Importante</h2> </div> <div class="column medium" id="2" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Medio</h2> </div> <div class="column mild" id="3" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Leve</h2> </div> </div> <div id="0" class="column two-column" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>New Tickets</h2> <div class="ticket-container" data-astro-cid-2zp6q64z></div> </div> <div id="9" class="column two-column" data-astro-cid-2zp6q64z> <h2 data-astro-cid-2zp6q64z>Done Tickets</h2> <div class="ticket-container" data-astro-cid-2zp6q64z></div> </div> <button id="delete-done-tickets" data-astro-cid-2zp6q64z>Delete All Done Tickets</button> <script>(function(){const tickets = [{"id":12,"nombre":"yo","departamento":"tu","descripcion":"el","importancia":"medio","state":2},{"id":11,"nombre":"Don Francisco","departamento":"it","descripcion":"no se encender el pc","importancia":"importante","state":3},{"id":10,"nombre":"qqqqq","departamento":"wdqw","descripcion":"qwfdqwdfqw","importancia":"importante","state":1},{"id":7,"nombre":"6666666666666","departamento":"66666666666666666666","descripcion":"66666666666666666","importancia":"leve","state":3}];
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../db/supabase';
 
+// Fetch all tickets
+const { data: tickets, error } = await supabase
+  .from('tickets')
+  .select('*')
+  .order('id', { ascending: false });
+
+if (error) {
+  console.error('Error fetching tickets:', error);
+}
+---
+
+<Layout title="Admin - Ticket Management">
+  <h1>Ticket Management</h1>
+  
+  <div class="columns">
+    <div class="column important" id="1">
+      <h2>Importante</h2>
+    </div>
+    <div class="column medium" id="2">
+      <h2>Medio</h2>
+    </div>
+    <div class="column mild" id="3">
+      <h2>Leve</h2>
+    </div>
+  </div>
+  
+  <div id="0" class="column two-column">
+    <h2>New Tickets</h2>
+    <div class="ticket-container"></div>
+  </div>
+  
+  <div id="9" class="column two-column">
+    <h2>Done Tickets</h2>
+    <div class="ticket-container"></div>
+  </div>
+  
+  <button id="delete-done-tickets">Delete All Done Tickets</button>
+
+  <script define:vars={{ tickets }}>
     function createTicketElement(ticket) {
       const ticketEl = document.createElement('div');
       ticketEl.className = 'ticket';
@@ -166,4 +198,47 @@
         }
       }
     });
-  })();</script>  </body></html> 
+  </script>
+</Layout>
+
+<style>
+  .columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .column {
+    flex: 1;
+    min-height: 300px;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
+  .important { background-color: #ffeeee; }
+  .medium { background-color: #fff5ee; }
+  .mild { background-color: #eef6ff; }
+
+  #0, #9 {
+    margin-top: 1rem;
+  }
+
+  #delete-done-tickets {
+    margin-top: 1rem;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  .ticket {
+    margin-bottom: 10px;
+  }
+</style>

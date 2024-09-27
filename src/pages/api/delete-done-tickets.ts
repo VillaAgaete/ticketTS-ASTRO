@@ -1,34 +1,30 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL as string;
-const supabaseKey = process.env.SUPABASE_KEY as string;
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'POST') {
     try {
-      const ticket = req.body;
-      ticket.state = 0;  // Set initial state to 0 for new tickets
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('tickets')
-        .insert([ticket])
-        .select();
+        .delete()
+        .eq('state', 9);
 
       if (error) throw error;
 
       res.status(200).json({
         success: true,
-        message: "Your ticket has been sent successfully!",
-        ticket: data ? data[0] : null
+        message: "All done tickets have been deleted."
       });
     } catch (error) {
-      console.error('Error submitting ticket:', error);
+      console.error('Error deleting done tickets:', error);
       res.status(500).json({
         success: false,
-        message: "There was an error submitting your ticket. Please try again."
+        message: "There was an error deleting done tickets. Please try again."
       });
     }
   } else {
