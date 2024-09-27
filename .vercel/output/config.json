@@ -12,8 +12,28 @@
 			"handle": "filesystem"
 		},
 		{
-			"src": "/.*",
-			"dest": "render"
+			"src": "^\\/_image$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/admin\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/delete-done-tickets\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/submit-ticket\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/update-ticket-status\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/$",
+			"dest": "_render"
 		}
 	]
 }
