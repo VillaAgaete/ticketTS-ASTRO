@@ -17,6 +17,7 @@
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.5"
+    "@types/better-sqlite3": "^7.6.5",
+    "@vercel/node": "^2.15.8"
   }
 }

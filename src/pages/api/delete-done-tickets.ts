@@ -1,35 +1,34 @@
-// src/pages/api/delete-done-tickets.ts
-import type { APIRoute } from 'astro';
-import { supabase } from '../../db/supabase';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createClient } from '@supabase/supabase-js';
 
-export const POST: APIRoute = async () => {
-  try {
-    const { error } = await supabase
-      .from('tickets')
-      .delete()
-      .eq('state', 9);
+const supabaseUrl = process.env.SUPABASE_URL as string;
+const supabaseKey = process.env.SUPABASE_KEY as string;
 
-    if (error) throw error;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-    return new Response(JSON.stringify({
-      success: true,
-      message: "All done tickets have been deleted."
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  } catch (error) {
-    console.error('Error deleting done tickets:', error);
-    return new Response(JSON.stringify({
-      success: false,
-      message: "There was an error deleting done tickets. Please try again."
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method === 'POST') {
+    try {
+      const { error } = await supabase
+        .from('tickets')
+        .delete()
+        .eq('state', 9);
+
+      if (error) throw error;
+
+      res.status(200).json({
+        success: true,
+        message: "All done tickets have been deleted."
+      });
+    } catch (error) {
+      console.error('Error deleting done tickets:', error);
+      res.status(500).json({
+        success: false,
+        message: "There was an error deleting done tickets. Please try again."
+      });
+    }
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-};
+}
