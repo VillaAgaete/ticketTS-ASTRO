@@ -82,6 +82,19 @@ if (error) {
       }
     }
 
+    async function fetchTickets() {
+      try {
+        const response = await fetch('/api/get-tickets');
+        if (!response.ok) {
+          throw new Error('Failed to fetch tickets');
+        }
+        const tickets = await response.json();
+        displayTickets(tickets);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    }
+
     function displayTickets(tickets) {
       document.querySelectorAll('.ticket').forEach(t => t.remove());
       
@@ -162,20 +175,22 @@ if (error) {
     });
 
     async function updateTicketStatus(ticketId, newState) {
-      try {
-        const response = await fetch('/api/update-ticket-status', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ticketId, newState }),
-        });
-        if (!response.ok) throw new Error('Failed to update ticket status');
-        console.log(`Updated ticket ${ticketId} to state ${newState}`);
-      } catch (error) {
-        console.error('Error updating ticket status:', error);
-      }
-    }
+  try {
+    const response = await fetch('/api/update-ticket-status', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ticketId, newState }),
+    });
+    if (!response.ok) throw new Error('Failed to update ticket status');
+    const result = await response.json();
+    console.log(`Updated ticket ${ticketId} to state ${newState}`);
+    displayTickets(result.allTickets);  // Update the display with all tickets
+  } catch (error) {
+    console.error('Error updating ticket status:', error);
+  }
+}
 
     document.getElementById('delete-done-tickets')?.addEventListener('click', async () => {
       if (confirm('Are you sure you want to delete all done tickets?')) {
@@ -198,6 +213,12 @@ if (error) {
         }
       }
     });
+
+    // Initial fetch
+    fetchTickets();
+
+    // Fetch tickets every 30 seconds
+    setInterval(fetchTickets, 30000);
   </script>
 </Layout>
 

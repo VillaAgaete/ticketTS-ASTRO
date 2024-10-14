@@ -22,10 +22,19 @@ export default async function handler(req, res) {
     if (error) throw error;
 
     if (data && data.length > 0) {
+      // Fetch all tickets after update
+      const { data: allTickets, error: fetchError } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('id', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
       return res.status(200).json({
         success: true,
         message: `Ticket ${ticketId} updated to state ${newState}`,
-        updatedTicket: data[0]
+        updatedTicket: data[0],
+        allTickets: allTickets
       });
     } else {
       throw new Error('Ticket not found or not updated');
