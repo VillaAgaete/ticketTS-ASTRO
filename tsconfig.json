@@ -11,6 +11,7 @@
     "target": "ESNext",
     "strict": true,
     "allowJs": true,
+    "outDir": "./dist",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
