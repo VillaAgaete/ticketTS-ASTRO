@@ -19,12 +19,15 @@ if (error) {
   <div class="columns">
     <div class="column important" id="1">
       <h2>Importante</h2>
+      <div class="inside-column"></div>
     </div>
     <div class="column medium" id="2">
       <h2>Medio</h2>
+      <div class="inside-column"></div>
     </div>
     <div class="column mild" id="3">
       <h2>Leve</h2>
+      <div class="inside-column"></div>
     </div>
   </div>
   
@@ -63,11 +66,13 @@ if (error) {
       }
 
       ticketEl.innerHTML = `
-        <h3>${ticket.nombre}</h3>
-        <p class="description">${ticket.descripcion}</p>
-        <p>Departamento: ${ticket.departamento}</p>
-        <p>Importancia: <span class="importance-text" style="color: ${importanceColor}; font-weight: bold;">${ticket.importancia}</span></p>
-        <button class="mark-done">Mark as Done</button>
+        <div style="border: 2px solid black; padding: 10px; margin: 5px; border-radius: 5px;">
+          <h3>${ticket.nombre}</h3>
+          <p class="description">${ticket.descripcion}</p>
+          <p>Departamento: ${ticket.departamento}</p>
+          <p>Importancia: <span class="importance-text" style="color: ${importanceColor}; font-weight: bold;">${ticket.importancia}</span></p>
+          <button class="mark-done">Mark as Done</button>
+        </div>
       `;
 
       return ticketEl;
